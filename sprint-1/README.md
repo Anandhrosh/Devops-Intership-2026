@@ -2,23 +2,23 @@
 
 ## Project Title
 
-**Optimized Multi-Stage Dockerfile for a Node.js Application**
+**Optimized Multi-Stage Dockerfile for a Go Application**
 
 ## Description
 
-This project is part of the DevOps Internship 2026 evaluation. The objective is to build an optimized, secure, and lightweight Docker image for a sample Node.js application using a multi-stage Dockerfile.
+This project is part of the DevOps Internship 2026 evaluation. The objective is to build an optimized, secure, and lightweight Docker image for a sample Go application using a multi-stage Dockerfile.
 
-The project demonstrates how to separate build dependencies from the production runtime environment to reduce the final Docker image size. It uses Node.js with Alpine Linux as the base image to achieve a target image size of less than 100 MB.
+The project separates the Go build environment from the production runtime image. The application is compiled in a Go Alpine builder stage, and only the compiled executable is copied into a minimal `scratch` runtime image. The resulting image is approximately **6.02 MB**, which is below the project target of 100 MB.
 
-Security is a key focus of this project. The application runs under a custom non-root user instead of root. Docker layer caching is optimized by copying dependency files before application source code. A Docker health check is also configured to monitor the application's availability.
+Security is a key focus of this project. The application runs under a custom non-root user named `appuser`. The Dockerfile also configures a health check, exposes port 3000, and uses a `.dockerignore` file to keep unnecessary files out of the build context.
 
 ### Project Objectives
 
 * Implement a multi-stage Docker build.
 * Optimize the final Docker image to less than 100 MB.
-* Use a lightweight Alpine Linux base image.
+* Use a lightweight build image and a minimal `scratch` runtime image.
 * Run the application using a custom non-root user.
-* Optimize Docker layer caching.
+* Compile the Go application as a static Linux executable.
 * Configure a Docker health check.
 * Expose the application on port 3000.
 * Document the build, execution, and verification procedures.
@@ -29,12 +29,12 @@ Security is a key focus of this project. The application runs under a custom non
 
 The following tools and software are required:
 
-* Ubuntu 24.04 LTS
+* Ubuntu 24.04 LTS (or another supported Linux environment)
 * Docker Engine
-* Node.js 22
-* npm
 * Git
 * GitHub account
+
+The Go compiler is provided by the Docker build stage, so Go does not need to be installed separately on the host.
 
 ### Installing
 
@@ -56,62 +56,69 @@ cd Devops-Intership-2026/sprint-1
 ls -la
 ```
 
-The directory should contain the following files:
+The directory should contain the following project files:
 
 ```text
 sprint-1/
-├── app.js
-├── package.json
-├── package-lock.json
-├── Dockerfile
 ├── .dockerignore
+├── Dockerfile
+├── main.go
 └── README.md
 ```
 
-**4. Generate the package lock file if it is missing**
-
-```bash
-npm install --package-lock-only
-```
-
-### Executing Program
+## Executing Program
 
 **Step 1: Build the Docker image**
 
 Build the application image using the Dockerfile:
 
 ```bash
-docker build -t sprint1-node-app:1.0 .
+docker build -t sprint1-go-app .
 ```
 
 **Step 2: Verify the Docker image**
 
 ```bash
-docker images sprint1-node-app
+docker images sprint1-go-app
 ```
 
 **Step 3: Check the image size**
 
 ```bash
-docker image inspect sprint1-node-app:1.0 --format '{{.Size}}'
+docker image inspect sprint1-go-app --format '{{.Size}}'
 ```
 
-The final Docker image must be less than 100 MB to meet the project requirement.
+The final image should be less than 100 MB. In the tested build, the image size was approximately **6.02 MB**. Docker may display the size in bytes in the inspect command.
 
 **Step 4: Run the Docker container**
 
+Run the application and map host port 3000 to container port 3000:
+
 ```bash
 docker run -d \
-  --name sprint1-app \
+  --name sprint1-go-container \
   -p 3000:3000 \
-  sprint1-node-app:1.0
+  sprint1-go-app
 ```
+
+If host port 3000 is already in use, use another host port, such as 8080:
+
+```bash
+docker run -d \
+  --name sprint1-go-container \
+  -p 8080:3000 \
+  sprint1-go-app
+```
+
+When using port 8080, access the application at `http://localhost:8080`.
 
 **Step 5: Verify the running container**
 
 ```bash
 docker ps
 ```
+
+Check that the container is running and that the port mapping is shown as `3000->3000` (or `8080->3000` if you used the alternative command).
 
 **Step 6: Test the application**
 
@@ -124,8 +131,10 @@ curl http://localhost:3000
 Expected output:
 
 ```text
-Hello from Sprint 1 Docker Project!
+Welcome to Sprint 1 Docker Project!
 ```
+
+You can also open `http://localhost:3000` in a web browser.
 
 **Step 7: Test the health endpoint**
 
@@ -141,33 +150,33 @@ OK
 
 **Step 8: Verify non-root execution**
 
-Check the user running inside the container:
+The final `scratch` image does not include common shell utilities such as `whoami` or `id`. Verify the configured container user using Docker inspect:
 
 ```bash
-docker exec sprint1-app whoami
+docker inspect sprint1-go-container --format='User: {{.Config.User}}'
 ```
 
 Expected output:
 
 ```text
-appuser
+User: appuser
 ```
 
-Verify the user ID:
+To inspect the custom user's account entry in the image, export the container filesystem and read its passwd file:
 
 ```bash
-docker exec sprint1-app id
+docker export sprint1-go-container | tar -xOf - etc/passwd
 ```
 
-The container should run with a nonzero UID rather than root (UID 0).
+The output should include an entry for `appuser` with UID `10001`. A nonzero UID means the application is not configured to run as root.
 
 **Step 9: Verify the Docker health check**
 
 ```bash
-docker inspect sprint1-app --format '{{.State.Health.Status}}'
+docker inspect sprint1-go-container --format '{{.State.Health.Status}}'
 ```
 
-Expected output after a successful health check:
+Expected output after the health check succeeds:
 
 ```text
 healthy
@@ -176,14 +185,20 @@ healthy
 **Step 10: View application logs**
 
 ```bash
-docker logs sprint1-app
+docker logs sprint1-go-container
 ```
 
 **Step 11: Stop and remove the container**
 
 ```bash
-docker stop sprint1-app
-docker rm sprint1-app
+docker stop sprint1-go-container
+docker rm sprint1-go-container
+```
+
+To start the existing container again later, use:
+
+```bash
+docker start sprint1-go-container
 ```
 
 ## Dockerfile Optimization
@@ -192,38 +207,39 @@ The Dockerfile uses a multi-stage build to separate the build environment from t
 
 ### Build Stage
 
-* Uses Node.js Alpine as the base image.
-* Copies `package.json` and `package-lock.json` first.
-* Installs production dependencies using `npm ci --omit=dev`.
-* Copies the application source code.
+* Uses `golang:1.24-alpine` as the builder image.
+* Copies `main.go` into the build stage.
+* Compiles the Go application for Linux with CGO disabled.
+* Uses `-trimpath` and linker flags `-s -w` to reduce build metadata and executable size.
+* Creates a passwd entry for the custom runtime user.
 
 ### Production Stage
 
-* Uses Node.js Alpine as the runtime image.
-* Creates a custom non-root user named `appuser`.
-* Copies only the required application files and dependencies from the build stage.
+* Uses `scratch`, an empty base image, as the runtime image.
+* Copies only the compiled application executable and the passwd file from the builder stage.
+* Runs the application as the custom non-root user `appuser`.
 * Exposes port 3000.
-* Configures a Docker health check.
-* Runs the application as the non-root user.
+* Configures a Docker health check using the application's `healthcheck` command.
+* Starts the compiled application executable.
 
 ### Image Optimization Techniques
 
-* Multi-stage Docker build to avoid unnecessary build tools in the final image.
-* Alpine Linux to reduce the base image size.
-* Efficient layer caching by copying dependency manifests before application source code.
-* Production-only dependency installation.
+* Multi-stage Docker build to keep the compiler and build tools out of the final image.
+* `scratch` runtime image to avoid including an operating system userland or unnecessary packages.
+* Static Go compilation with `CGO_ENABLED=0`.
+* `-trimpath` and `-ldflags="-s -w"` to reduce executable metadata and size.
 * `.dockerignore` to exclude unnecessary files from the build context.
 
 ## Security Hardening
 
 The following security measures are implemented:
 
-1. **Non-root execution:** The application runs as the custom `appuser` instead of root.
-2. **Minimal runtime image:** Alpine Linux is used to reduce unnecessary packages.
-3. **Multi-stage build:** The final image excludes the separate build environment.
-4. **Production dependencies:** Only production dependencies are installed.
-5. **Docker health check:** The application health endpoint is monitored.
-6. **Build context filtering:** `.dockerignore` excludes unnecessary files and local dependencies.
+1. **Non-root execution:** The application runs as the custom `appuser` rather than root.
+2. **Minimal runtime image:** The `scratch` image contains only the files required to run the application.
+3. **Multi-stage build:** The final image excludes the Go compiler and build environment.
+4. **Reduced executable metadata:** Build flags remove path and symbol/debug information that is not needed at runtime.
+5. **Docker health check:** The application health endpoint is checked to report container health.
+6. **Build context filtering:** `.dockerignore` excludes unnecessary files from the build context.
 
 ## Help
 
@@ -231,22 +247,22 @@ The following security measures are implemented:
 
 **1. Docker image build fails**
 
-Check the Dockerfile and ensure all required application files exist.
+Check that the required project files exist and review the build output:
 
 ```bash
 ls -la
-docker build -t sprint1-node-app:1.0 .
+docker build -t sprint1-go-app .
 ```
 
 **2. Port 3000 is already in use**
 
-Use another host port:
+Use another host port while keeping the application port inside the container at 3000:
 
 ```bash
 docker run -d \
-  --name sprint1-app \
+  --name sprint1-go-container \
   -p 8080:3000 \
-  sprint1-node-app:1.0
+  sprint1-go-app
 ```
 
 Access the application at `http://localhost:8080`.
@@ -262,7 +278,7 @@ docker ps -a
 View the container logs:
 
 ```bash
-docker logs sprint1-app
+docker logs sprint1-go-container
 ```
 
 **4. Container is not healthy**
@@ -270,37 +286,39 @@ docker logs sprint1-app
 Check the health status and recent health-check results:
 
 ```bash
-docker inspect sprint1-app \
+docker inspect sprint1-go-container \
   --format '{{json .State.Health}}'
 ```
 
 Check the application logs:
 
 ```bash
-docker logs sprint1-app
+docker logs sprint1-go-container
 ```
 
 **5. Verify the container is not running as root**
 
+The `scratch` image does not include `id` or `whoami`. Check the configured user with:
+
 ```bash
-docker exec sprint1-app id
+docker inspect sprint1-go-container --format='User: {{.Config.User}}'
 ```
 
-The UID should be nonzero.
+The expected user is `appuser`. The Dockerfile assigns this account UID `10001`, which is nonzero.
 
 **6. Docker image exceeds 100 MB**
 
 Check the image size:
 
 ```bash
-docker images sprint1-node-app
+docker images sprint1-go-app
 ```
 
-Review the base image and the files copied into the final stage. Rebuild and verify the image size after making optimizations.
+Review the final Dockerfile stage and confirm that only the compiled executable and required passwd file are copied into the `scratch` image. Rebuild and verify the image size after making changes.
 
 ## Authors
 
-**Anandhrosh**
+**Anandhrosh**  
 DevOps Internship 2026
 
 GitHub: [@Anandhrosh](https://github.com/Anandhrosh)
@@ -308,13 +326,12 @@ GitHub: [@Anandhrosh](https://github.com/Anandhrosh)
 ## Version History
 
 * 1.0
-
-  * Initial Sprint 1 implementation.
-  * Created a sample Node.js application.
+  * Created a sample Go HTTP application.
   * Implemented a multi-stage Dockerfile.
-  * Configured a non-root user.
+  * Used a minimal `scratch` runtime image.
+  * Configured a custom non-root user.
   * Added a Docker health check.
-  * Optimized Docker layer caching.
+  * Optimized the compiled executable and Docker build context.
   * Added build, execution, and verification instructions.
 
 ## License
@@ -324,7 +341,7 @@ This project is intended for educational purposes as part of the DevOps Internsh
 ## Acknowledgments
 
 * [Docker Documentation](https://docs.docker.com/)
-* [Node.js Documentation](https://nodejs.org/docs/)
+* [Go Documentation](https://go.dev/doc/)
 * [Alpine Linux](https://www.alpinelinux.org/)
 * [Git Documentation](https://git-scm.com/doc)
 * [GitHub Documentation](https://docs.github.com/)
