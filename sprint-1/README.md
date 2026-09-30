@@ -337,15 +337,15 @@ GitHub: [@Anandhrosh](https://github.com/Anandhrosh)
 * 2.0
   Updated Application Features
 
-* The Go application now includes a simple web interface with a home page and a health-status page.
-* Home Page (/)
-* Displays a welcome message.
-* Provides a simple, user-friendly web interface.
-* Runs on port 3000.
-* Health Page (/health)
-* Displays the application's health information.
-* Returns HTTP status 200 when the application is running.
-* Used by Docker's built-in HEALTHCHECK to monitor the application.
+ * The Go application now includes a simple web interface with  a  home page and a health-status page.
+ * Home Page (/)
+ * Displays a welcome message.
+ * Provides a simple, user-friendly web interface.
+ * Runs on port 3000.
+ * Health Page (/health)
+ * Displays the application's health information.
+ * Returns HTTP status 200 when the application is running.
+ * Used by Docker's built-in HEALTHCHECK to monitor the  application.
 
 ## License
 
