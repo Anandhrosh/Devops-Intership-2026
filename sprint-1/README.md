@@ -334,7 +334,7 @@ GitHub: [@Anandhrosh](https://github.com/Anandhrosh)
   * Optimized the compiled executable and Docker build context.
   * Added build, execution, and verification instructions.
 
-  * 2.0
+* 2.0
   Updated Application Features
 
 * The Go application now includes a simple web interface with a home page and a health-status page.
