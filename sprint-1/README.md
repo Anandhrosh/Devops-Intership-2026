@@ -30,7 +30,7 @@ Security is a key focus of this project. The application runs under a custom non
 The following tools and software are required:
 
 * Ubuntu 24.04 LTS (or another supported Linux environment)
-* Docker Engine
+* Docker Engine or Docker Desktop with WSL integration
 * Git
 * GitHub account
 
@@ -68,7 +68,7 @@ sprint-1/
 
 ## Executing Program
 
-**Step 1: Build the Docker image**
+### Step 1: Build the Docker image
 
 Build the application image using the Dockerfile:
 
@@ -76,13 +76,17 @@ Build the application image using the Dockerfile:
 docker build -t sprint1-go-app .
 ```
 
-**Step 2: Verify the Docker image**
+This command builds the Go application using the builder stage and creates a minimal production image.
+
+### Step 2: Verify the Docker image
 
 ```bash
 docker images sprint1-go-app
 ```
 
-**Step 3: Check the image size**
+This command displays the image repository, tag, image ID, and size.
+
+### Step 3: Check the image size
 
 ```bash
 docker image inspect sprint1-go-app --format '{{.Size}}'
@@ -90,7 +94,7 @@ docker image inspect sprint1-go-app --format '{{.Size}}'
 
 The final image should be less than 100 MB. In the tested build, the image size was approximately **6.02 MB**. Docker may display the size in bytes in the inspect command.
 
-**Step 4: Run the Docker container**
+### Step 4: Run the Docker container
 
 Run the application and map host port 3000 to container port 3000:
 
@@ -112,7 +116,13 @@ docker run -d \
 
 When using port 8080, access the application at `http://localhost:8080`.
 
-**Step 5: Verify the running container**
+If a container with the same name already exists, remove it before running the command again:
+
+```bash
+docker rm -f sprint1-go-container
+```
+
+### Step 5: Verify the running container
 
 ```bash
 docker ps
@@ -120,7 +130,7 @@ docker ps
 
 Check that the container is running and that the port mapping is shown as `3000->3000` (or `8080->3000` if you used the alternative command).
 
-**Step 6: Test the application**
+### Step 6: Test the application
 
 Access the application using curl:
 
@@ -128,27 +138,25 @@ Access the application using curl:
 curl http://localhost:3000
 ```
 
-Expected output:
+The command returns the HTML content of the application home page. You can also open the page in a web browser:
 
-```text
-Welcome to Sprint 1 Docker Project!
-```
+`http://localhost:3000`
 
-You can also open `http://localhost:3000` in a web browser.
+The home page displays the Sprint 1 Docker Project welcome message, application information, port, and running status.
 
-**Step 7: Test the health endpoint**
+### Step 7: Test the health endpoint
 
 ```bash
-curl http://localhost:3000/health
+curl -i http://localhost:3000/health
 ```
 
-Expected output:
+The health endpoint returns an HTTP `200 OK` response when the application is running. It displays the application's health information in the browser.
 
-```text
-OK
-```
+Open the health page in a web browser:
 
-**Step 8: Verify non-root execution**
+`http://localhost:3000/health`
+
+### Step 8: Verify non-root execution
 
 The final `scratch` image does not include common shell utilities such as `whoami` or `id`. Verify the configured container user using Docker inspect:
 
@@ -162,15 +170,17 @@ Expected output:
 User: appuser
 ```
 
+The Dockerfile creates a custom account named `appuser` with UID `10001`. This is a non-root account.
+
 To inspect the custom user's account entry in the image, export the container filesystem and read its passwd file:
 
 ```bash
 docker export sprint1-go-container | tar -xOf - etc/passwd
 ```
 
-The output should include an entry for `appuser` with UID `10001`. A nonzero UID means the application is not configured to run as root.
+The output should include an entry for `appuser` with UID `10001`.
 
-**Step 9: Verify the Docker health check**
+### Step 9: Verify the Docker health check
 
 ```bash
 docker inspect sprint1-go-container --format '{{.State.Health.Status}}'
@@ -182,16 +192,33 @@ Expected output after the health check succeeds:
 healthy
 ```
 
-**Step 10: View application logs**
+Docker periodically runs the configured health check and reports the container's health status.
+
+To view detailed health-check information:
+
+```bash
+docker inspect sprint1-go-container --format '{{json .State.Health}}'
+```
+
+### Step 10: View application logs
 
 ```bash
 docker logs sprint1-go-container
 ```
 
-**Step 11: Stop and remove the container**
+This command displays the application logs, including messages indicating that the Go server has started.
+
+### Step 11: Stop and remove the container
+
+To stop the running container:
 
 ```bash
 docker stop sprint1-go-container
+```
+
+To remove the stopped container:
+
+```bash
 docker rm sprint1-go-container
 ```
 
@@ -281,6 +308,12 @@ View the container logs:
 docker logs sprint1-go-container
 ```
 
+If the container is stopped, start it with:
+
+```bash
+docker start sprint1-go-container
+```
+
 **4. Container is not healthy**
 
 Check the health status and recent health-check results:
@@ -318,34 +351,36 @@ Review the final Dockerfile stage and confirm that only the compiled executable 
 
 ## Authors
 
-**Anandhrosh**  
+**Anandhrosh**
 DevOps Internship 2026
 
 GitHub: [@Anandhrosh](https://github.com/Anandhrosh)
 
 ## Version History
 
-* 1.0
-  * Created a sample Go HTTP application.
-  * Implemented a multi-stage Dockerfile.
-  * Used a minimal `scratch` runtime image.
-  * Configured a custom non-root user.
-  * Added a Docker health check.
-  * Optimized the compiled executable and Docker build context.
-  * Added build, execution, and verification instructions.
+### Version 1.0
 
-* 2.0
-  Updated Application Features
+* Created a sample Go HTTP application.
+* Implemented a multi-stage Dockerfile.
+* Used a minimal `scratch` runtime image.
+* Configured a custom non-root user.
+* Added a Docker health check.
+* Optimized the compiled executable and Docker build context.
+* Added build, execution, and verification instructions.
 
- * The Go application now includes a simple web interface with  a  home page and a health-status page.
- * Home Page (/)
- * Displays a welcome message.
- * Provides a simple, user-friendly web interface.
- * Runs on port 3000.
- * Health Page (/health)
- * Displays the application's health information.
- * Returns HTTP status 200 when the application is running.
- * Used by Docker's built-in HEALTHCHECK to monitor the  application.
+### Version 2.0 — Updated Application Features
+
+* Added a simple web interface with a home page and a health-status page.
+* **Home page (`/`):**
+
+  * Displays a welcome message.
+  * Provides a simple, user-friendly web interface.
+  * Runs on port 3000.
+* **Health page (`/health`):**
+
+  * Displays the application's health information.
+  * Returns HTTP status 200 when the application is running.
+  * Is used by Docker's built-in `HEALTHCHECK` to monitor the application.
 
 ## License
 
