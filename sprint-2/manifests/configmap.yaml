@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sprint2-config
+data:
+  APP_ENV: "production"
+  APP_NAME: "sprint2-go-app"
+  LOG_LEVEL: "info"
