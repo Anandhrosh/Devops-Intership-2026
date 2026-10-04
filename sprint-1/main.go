@@ -196,6 +196,12 @@ http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 </html>`)
 })
 
+http.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/plain")
+    w.WriteHeader(http.StatusOK)
+    fmt.Fprint(w, "READY")
+})
+
 	log.Println("Server running on port 3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
