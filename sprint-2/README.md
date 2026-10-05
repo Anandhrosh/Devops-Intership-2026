@@ -703,7 +703,7 @@ kubectl apply -f manifests/
 kubectl get pods
 kubectl get services
 minikube service sprint2-go-service --url
-
+```
 ## Authors
 
 **Anandhrosh**
