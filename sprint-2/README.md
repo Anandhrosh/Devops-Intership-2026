@@ -693,6 +693,17 @@ minikube delete
 
 These cleanup commands were not required for the project submission because the Kubernetes deployment was successfully completed and verified.
 
+### Running the Project
+
+```bash
+cd ~/Devops-Intership-2026/sprint-2
+minikube start
+minikube image load sprint2-go-app:latest
+kubectl apply -f manifests/
+kubectl get pods
+kubectl get services
+minikube service sprint2-go-service --url
+
 ## Authors
 
 **Anandhrosh**
