@@ -696,10 +696,31 @@ These cleanup commands were not required for the project submission because the 
 ### Running the Project
 
 ```bash
-cd ~/Devops-Intership-2026/sprint-2
 minikube start
-minikube image load sprint2-go-app:latest
+minikube service sprint2-go-service --url
+```
+```bash
+If the Project Is Not Working
+
+Check the following:
+
+kubectl get nodes
+kubectl get pods
+kubectl get services
+kubectl get deployment
+kubectl get endpoints sprint2-go-service
+
+If the pods are not running correctly:
+
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+
+If the Kubernetes resources are missing:
+
 kubectl apply -f manifests/
+
+Then check again:
+
 kubectl get pods
 kubectl get services
 minikube service sprint2-go-service --url
