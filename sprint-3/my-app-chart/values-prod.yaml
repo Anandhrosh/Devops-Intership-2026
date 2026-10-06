@@ -1,0 +1,25 @@
+replicaCount: 3
+
+image:
+  repository: sprint2-go-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 3000
+  targetPort: 3000
+  nodePort: 30080
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+config:
+  APP_ENV: "production"
+  APP_NAME: "sprint2-go-app"
+  LOG_LEVEL: "info"
