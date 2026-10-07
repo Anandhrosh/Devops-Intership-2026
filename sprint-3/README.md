@@ -889,6 +889,49 @@ minikube delete
 
 The cleanup commands are not required during normal testing because the Helm release can remain deployed for verification.
 
+## Run the Project
+
+### 1. Go to the Helm chart directory
+
+```bash
+cd ~/Devops-Intership-2026/sprint-3/my-app-chart
+2. Start Minikube
+minikube start
+3. Check Minikube status
+minikube status
+4. Install the Helm chart
+helm install my-app-dev . -f values-dev.yaml
+5. Check Helm release
+helm list
+6. Check Kubernetes resources
+kubectl get pods
+kubectl get deployment
+kubectl get service
+7. Get the application URL
+minikube service sprint2-go-service --url
+
+Example:
+
+http://127.0.0.1:45843
+
+The local port may be different each time. This is normal because Minikube creates a temporary local tunnel.
+
+8. Test the application
+
+Open another terminal and use the URL returned above:
+
+curl http://127.0.0.1:45843/
+
+Test the health endpoint:
+
+curl http://127.0.0.1:45843/health
+9. Check Helm status
+helm status my-app-dev
+10. Stop and remove the project
+helm uninstall my-app-dev
+minikube stop
+```
+
 ## Authors
 
 **Anandhrosh**
