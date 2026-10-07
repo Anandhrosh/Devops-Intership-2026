@@ -579,7 +579,7 @@ The application was exposed through Minikube using:
 minikube service sprint2-go-service --url
 ```
 
-During the verification session, Minikube returned:
+During the verification session, Minikube returned temporary port like this:
 
 ```text
 http://127.0.0.1:45843
