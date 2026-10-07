@@ -895,21 +895,33 @@ The cleanup commands are not required during normal testing because the Helm rel
 
 ```bash
 cd ~/Devops-Intership-2026/sprint-3/my-app-chart
+```
 2. Start Minikube
+```bash
 minikube start
+```
 3. Check Minikube status
+```bash
 minikube status
+```
 4. Install the Helm chart
+```bash
 helm install my-app-dev . -f values-dev.yaml
+```
 5. Check Helm release
+```bash
 helm list
+```
 6. Check Kubernetes resources
+```bash
 kubectl get pods
 kubectl get deployment
 kubectl get service
+```
 7. Get the application URL
+```bash
 minikube service sprint2-go-service --url
-
+```
 Example:
 
 http://127.0.0.1:45843
@@ -926,8 +938,11 @@ Test the health endpoint:
 
 curl http://127.0.0.1:45843/health
 9. Check Helm status
+```bash
 helm status my-app-dev
+```
 10. Stop and remove the project
+```bash
 helm uninstall my-app-dev
 minikube stop
 ```
