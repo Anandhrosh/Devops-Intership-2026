@@ -904,21 +904,17 @@ minikube start
 ```bash
 minikube status
 ```
-4. Install the Helm chart
-```bash
-helm install my-app-dev . -f values-dev.yaml
-```
-5. Check Helm release
+4. Check Helm release
 ```bash
 helm list
 ```
-6. Check Kubernetes resources
+5. Check Kubernetes resources
 ```bash
 kubectl get pods
 kubectl get deployment
 kubectl get service
 ```
-7. Get the application URL
+6. Get the application URL
 ```bash
 minikube service sprint2-go-service --url
 ```
@@ -928,7 +924,7 @@ http://127.0.0.1:45843
 
 The local port may be different each time. This is normal because Minikube creates a temporary local tunnel.
 
-8. Test the application
+7. Test the application
 
 Open another terminal and use the URL returned above:
 
@@ -938,14 +934,9 @@ Test the health endpoint:
 
 curl http://127.0.0.1:45843/health
 
-9. Check Helm status
+8. Check Helm status
 ```bash
 helm status my-app-dev
-```
-10. Stop and remove the project
-```bash
-helm uninstall my-app-dev
-minikube stop
 ```
 
 ## Authors
