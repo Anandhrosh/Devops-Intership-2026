@@ -937,6 +937,7 @@ curl http://127.0.0.1:45843/
 Test the health endpoint:
 
 curl http://127.0.0.1:45843/health
+
 9. Check Helm status
 ```bash
 helm status my-app-dev
