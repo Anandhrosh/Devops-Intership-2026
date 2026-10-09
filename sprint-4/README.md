@@ -459,7 +459,7 @@ Expected result: HTTP `200 OK` and the application HTML.
 
 ## Authors
 
-**Anandhrosh**
+**Anandhrosh S**
 
 DevOps Internship 2026
 
