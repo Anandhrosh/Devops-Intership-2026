@@ -349,6 +349,46 @@ docker images sprint1-go-app
 
 Review the final Dockerfile stage and confirm that only the compiled executable and required passwd file are copied into the `scratch` image. Rebuild and verify the image size after making changes.
 
+## Proof of Work
+
+The following screenshots demonstrate the successful implementation and verification of the Docker containerization project, including the multi-stage build, image optimization, application execution, health checks, and non-root user configuration.
+
+### 1. Docker Image Build
+
+This screenshot shows the successful Docker image build using the multi-stage Dockerfile.
+
+![Docker Build Output](Screenshots/Docker-Build-Output.png)
+
+### 2. Docker Image Size
+
+This screenshot verifies that the final Docker image is approximately 6 MB, meeting the requirement of keeping the image size below 100 MB.
+
+![Docker Image Size](Screenshots/Docker-Image-Size.png)
+
+### 3. Application Home Page
+
+This screenshot demonstrates that the Go web application is running successfully and displaying its home page in the browser.
+
+![Docker Home Page](Screenshots/Docker-Home-Page.png)
+
+### 4. Application Health Check
+
+This screenshot shows the application's health page, verifying that the health endpoint is accessible.
+
+![Docker Health Page](Screenshots/Docker-Health-Page.png)
+
+### 5. Non-Root User Verification
+
+This screenshot verifies the Docker container's non-root user configuration using the custom user `appuser`.
+
+![Non-Root User](Screenshots/Non-Root-User.png)
+
+### 6. Successful Container Execution
+
+This screenshot demonstrates that the Docker container is running successfully, with its health status and port mapping verified.
+
+![Successful Container Execution](Screenshots/Successful-Container-Execution.png)
+
 ## Authors
 
 **Anandhrosh**
