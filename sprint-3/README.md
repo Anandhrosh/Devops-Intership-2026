@@ -938,6 +938,33 @@ curl http://127.0.0.1:45843/health
 ```bash
 helm status my-app-dev
 ```
+## Proof of Work
+
+The following screenshots demonstrate the validation, configuration, and deployment of the Helm chart for the Sprint 2 Go application.
+
+### 1. Helm Chart Validation
+
+This screenshot shows the successful validation of the Helm chart using `helm lint .`.
+
+![Helm Chart Validation](Screenshots/helm%20lint.png)
+
+### 2. Development Configuration
+
+This screenshot demonstrates the Kubernetes resources rendered using `values-dev.yaml`, including one replica and lower resource requests and limits.
+
+![Development Helm Template](Screenshots/helm%20template%20values-dev.png)
+
+### 3. Production Configuration
+
+This screenshot demonstrates the Kubernetes resources rendered using `values-prod.yaml`, including three replicas and higher resource requests and limits.
+
+![Production Helm Template](Screenshots/helm%20template%20values-prod.png)
+
+### 4. Helm Release Deployment
+
+This screenshot shows the output of `helm list`, verifying the status of the Helm release.
+
+![Helm Release List](Screenshots/helm%20list.png)
 
 ## Authors
 
