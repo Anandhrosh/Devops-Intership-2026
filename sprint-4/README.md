@@ -456,7 +456,27 @@ Expected result: HTTP `200 OK` and the application HTML.
 
 **Note:** The `-k` option skips certificate verification because this project uses a self-signed TLS certificate. Keep the port-forward terminal running while testing.
 
+## Proof of Work
 
+The following screenshots demonstrate the successful implementation of Ingress routing and SSL/TLS certificate management.
+
+### 1. Ingress Configuration
+
+This screenshot shows the Kubernetes Ingress resource, hostname, address, and ports.
+
+![Ingress Configuration](Screenshots/01-ingress.png)
+
+### 2. TLS Secret
+
+This screenshot verifies that the Kubernetes TLS Secret exists and contains two data entries.
+
+![TLS Secret](Screenshots/02-tls-secret.png)
+
+### 3. HTTPS and TLS Verification
+
+This screenshot demonstrates the TLS handshake and HTTPS request to the application using the `app.local` hostname.
+
+![HTTPS TLS Verification](Screenshots/03-https-tls.png)
 ## Authors
 
 **Anandhrosh S**
