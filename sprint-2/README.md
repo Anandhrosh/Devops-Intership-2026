@@ -725,6 +725,34 @@ kubectl get pods
 kubectl get services
 minikube service sprint2-go-service --url
 ```
+## Proof of Work
+
+The following screenshots demonstrate the successful implementation and verification of Kubernetes container orchestration, including application deployment, service exposure, and health checks.
+
+### 1. Kubernetes Pods
+
+This screenshot shows the two application Pods running successfully in the Minikube Kubernetes cluster, verifying the Deployment's replica configuration.
+
+![Kubernetes Pods](Screenshots/01-kubectl-get-pods.png)
+
+### 2. Kubernetes Service
+
+This screenshot verifies the `sprint2-go-service` NodePort Service and its configured ports for accessing the application.
+
+![Kubernetes Service](Screenshots/02-kubectl-get-services.png)
+
+### 3. Pod Configuration and Liveness Probe
+
+This screenshot shows the Pod details, including the container image, container port, running status, and liveness probe configuration.
+
+![Pod Details - Image 1](Screenshots/03-kubectl-describe-pod-IMAGE1.png)
+
+### 4. Pod Readiness Probe and Environment Variables
+
+This screenshot provides additional Pod details, including the readiness probe and environment variable references to the ConfigMap and Secret.
+
+![Pod Details - Image 2](Screenshots/04-kubectl-describe-pod-IMAGE2.png)
+
 ## Authors
 
 **Anandhrosh**
