@@ -1,0 +1,30 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sprint6-app
+  labels:
+    app: sprint6-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sprint6-app
+  template:
+    metadata:
+      labels:
+        app: sprint6-app
+    spec:
+      containers:
+        - name: app
+          image: sprint2-go-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
