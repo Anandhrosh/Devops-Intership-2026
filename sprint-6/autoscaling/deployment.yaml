@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,10 +16,10 @@ spec:
     spec:
       containers:
         - name: app
-          image: sprint2-go-app:latest
+          image: registry.k8s.io/hpa-example
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 3000
+            - containerPort: 80
           resources:
             requests:
               cpu: "100m"

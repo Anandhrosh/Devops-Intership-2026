@@ -9,4 +9,4 @@ spec:
     app: sprint6-app
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 80
