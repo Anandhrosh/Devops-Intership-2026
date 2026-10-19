@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v2
+  labels:
+    app: canary-demo
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: canary-demo
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: canary-demo
+        version: v2
+    spec:
+      containers:
+        - name: app
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo 'Version 2.0 - Canary' > /usr/share/nginx/html/index.html
+              exec nginx -g 'daemon off;'
