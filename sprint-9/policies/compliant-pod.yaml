@@ -29,3 +29,12 @@ spec:
         limits:
           cpu: "200m"
           memory: "128Mi"
+      volumeMounts:
+        - name: nginx-config
+          mountPath: /tmp/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+  volumes:
+    - name: nginx-config
+      configMap:
+        name: nginx-nonroot-config
