@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: compliant-pod
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: nginx
+      image: nginx:1.28
+      ports:
+        - containerPort: 8080
+      command:
+        - nginx
+        - -g
+        - daemon off;
+      args:
+        - -c
+        - /tmp/nginx.conf
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+        limits:
+          cpu: "200m"
+          memory: "128Mi"
