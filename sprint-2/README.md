@@ -6,7 +6,7 @@
 
 ## Description
 
-This project is part of the DevOps Internship 2026 evaluation. The objective of Sprint 2 was to deploy the containerized Go application from Sprint 1 onto a local Kubernetes cluster using Minikube.
+The objective of Sprint 2 was to deploy the containerized Go application from Sprint 1 onto a local Kubernetes cluster using Minikube.
 
 The application was deployed using a Kubernetes Deployment with two replicas. A ConfigMap and Secret were injected into the application container as environment variables. Kubernetes liveness and readiness probes were configured using the application's `/health` and `/ready` endpoints.
 
