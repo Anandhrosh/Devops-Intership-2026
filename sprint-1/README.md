@@ -6,7 +6,7 @@
 
 ## Description
 
-This project is part of the DevOps Internship 2026 evaluation. The objective is to build an optimized, secure, and lightweight Docker image for a sample Go application using a multi-stage Dockerfile.
+The objective is to build an optimized, secure, and lightweight Docker image for a sample Go application using a multi-stage Dockerfile.
 
 The project separates the Go build environment from the production runtime image. The application is compiled in a Go Alpine builder stage, and only the compiled executable is copied into a minimal `scratch` runtime image. The resulting image is approximately **6.02 MB**, which is below the project target of 100 MB.
 
