@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import './index.css'
 
 function App() {
   const [images, setImages] = useState([])
