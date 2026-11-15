@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sprint-10-capstone
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Anandhrosh/Devops-Intership-2026.git
+    targetRevision: main
+    path: sprint-10/kubernetes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=false

@@ -1,0 +1,3 @@
+
+# Kubernetes secrets - never commit credentials
+/sprint-10/kubernetes/database/secret.yaml
