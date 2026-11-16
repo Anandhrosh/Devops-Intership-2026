@@ -1,0 +1,272 @@
+# ArgoCD GitOps Lab – Kubernetes Deployment
+
+## 1. Project Overview
+
+This project demonstrates GitOps using **ArgoCD, Kubernetes, GitHub and Kustomize**.
+
+ArgoCD continuously monitors the GitHub repository and automatically deploys Kubernetes resources whenever changes are pushed to the configured Git branch.
+
+The application deployed in this lab is an NGINX web server running with two replicas inside a Minikube Kubernetes cluster.
+
+## 2. Technologies Used
+
+- Kubernetes
+- Minikube
+- ArgoCD Core
+- Git and GitHub
+- Kustomize
+- NGINX
+- Docker
+
+## 3. Project Architecture
+
+```text
+GitHub Repository
+       |
+       | ArgoCD monitors Git
+       v
+ArgoCD Controller
+       |
+       | Synchronizes manifests
+       v
+Minikube Kubernetes Cluster
+       |
+       v
+NGINX Deployment
+       |
+       +--- NGINX Pod 1
+       |
+       +--- NGINX Pod 2
+       |
+       v
+NGINX ClusterIP Service
+```
+
+## 4. Project Structure
+
+```text
+ArgoCD-GitOps-Lab/
+│
+├── app/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── kustomization.yaml
+│
+├── argocd/
+│   ├── application.yaml
+│   └── project.yaml
+│
+└── README.md
+```
+
+## 5. Kubernetes Configuration
+
+### NGINX Deployment
+
+- Deployment name: `gitops-nginx`
+- Container image: `nginx:1.27-alpine`
+- Replicas: 2
+- Container port: 80
+- CPU and memory requests and limits configured.
+
+### Kubernetes Service
+
+- Service name: `gitops-nginx`
+- Service type: ClusterIP
+- Service port: 80
+- Target port: 80
+
+### ArgoCD Application
+
+- Application name: `argocd-gitops-lab`
+- Namespace: `argocd`
+- Git repository: `https://github.com/Anandhrosh/Devops-Intership-2026.git`
+- Branch: `main`
+- Manifest path: `ArgoCD-GitOps-Lab/app`
+
+### Automated Sync Features
+
+- Automated synchronization
+- Self-healing enabled
+- Automatic pruning enabled
+
+## 6. Run the Existing Project
+
+**Important:** The project has already been created and configured. You do not need to reinstall ArgoCD or recreate the Kubernetes resources every time.
+
+### Step 1 – Start Minikube
+
+Start the existing ArgoCD lab profile:
+
+```bash
+minikube start -p argocd-lab
+```
+
+### Step 2 – Set Kubernetes Context
+
+```bash
+kubectl config use-context argocd-lab
+```
+
+### Step 3 – Check Minikube
+
+```bash
+minikube status -p argocd-lab
+```
+
+Check the Kubernetes node:
+
+```bash
+kubectl get nodes
+```
+
+### Step 4 – Check ArgoCD
+
+```bash
+kubectl get pods -n argocd
+```
+
+Wait until the ArgoCD pods show `Running` and `1/1 Ready`.
+
+### Step 5 – Check ArgoCD Application
+
+```bash
+kubectl get applications -n argocd
+```
+
+Expected result:
+
+```text
+NAME                SYNC STATUS   HEALTH STATUS
+argocd-gitops-lab   Synced        Healthy
+```
+
+### Step 6 – Check NGINX Deployment
+
+```bash
+kubectl get deployments,pods,services -n default -l app=gitops-nginx
+```
+
+Expected:
+- Deployment: 2/2 ready
+- Pods: 2 Running
+- Service: gitops-nginx
+
+### Step 7 – Test NGINX Service
+
+Run:
+
+```bash
+kubectl run nginx-test --rm -it --restart=Never --image=curlimages/curl -- curl -I http://gitops-nginx.default.svc.cluster.local
+```
+
+Expected response:
+
+```text
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+```
+
+Your application is running successfully!
+
+## 7. How to Apply Future Changes (GitOps Workflow)
+
+When you want to change the application:
+
+**Step 1:** Edit the Kubernetes YAML files inside `app/`.
+
+**Step 2:** Commit and push the changes to GitHub.
+
+```bash
+git add .
+git commit -m "update nginx application"
+git push origin main
+```
+
+**Step 3:** ArgoCD detects the GitHub changes and automatically synchronizes the Kubernetes cluster.
+
+Check synchronization:
+
+```bash
+kubectl get application argocd-gitops-lab -n argocd
+```
+
+Check deployed resources:
+
+```bash
+kubectl get pods -n default -l app=gitops-nginx
+```
+
+## 8. Stop the Project
+
+When you finish practicing, stop the Minikube profile:
+
+```bash
+minikube stop -p argocd-lab
+```
+
+This preserves the existing cluster configuration and resources.
+
+To run the project again, follow Section 6.
+
+## 9. Troubleshooting
+
+### Check ArgoCD pods
+
+```bash
+kubectl get pods -n argocd
+```
+
+### Check Application details
+
+```bash
+kubectl describe application argocd-gitops-lab -n argocd
+```
+
+### Check Application Controller logs
+
+```bash
+kubectl logs statefulset/argocd-application-controller -n argocd
+```
+
+### Refresh Application status
+
+```bash
+kubectl annotate application argocd-gitops-lab -n argocd argocd.argoproj.io/refresh=hard --overwrite
+```
+
+### Check NGINX deployment
+
+```bash
+kubectl get deployment gitops-nginx -n default
+```
+
+## 10. Learning Outcomes
+
+After completing this project, I learned:
+
+1. Installing and configuring ArgoCD Core.
+2. Creating an isolated Minikube profile.
+3. Connecting ArgoCD with a GitHub repository.
+4. Creating ArgoCD Applications and AppProjects.
+5. Organizing Kubernetes manifests with Kustomize.
+6. Implementing automated GitOps synchronization.
+7. Understanding self-healing and pruning.
+8. Deploying and verifying NGINX using Kubernetes.
+9. Testing internal Kubernetes Service connectivity.
+
+## 11. Project Status
+
+**Completed – ArgoCD GitOps Lab**
+
+- ArgoCD Core installed.
+- GitHub repository connected.
+- Application synchronized successfully.
+- NGINX Deployment healthy with two replicas.
+- HTTP connectivity test successful (200 OK).
+
+---
+
+**Repository:** https://github.com/Anandhrosh/Devops-Intership-2026
+
+**Project Directory:** `ArgoCD-GitOps-Lab`
