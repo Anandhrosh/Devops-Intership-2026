@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  namespace: argocd
+spec:
+  description: Default project for ArgoCD GitOps Lab
+  sourceRepos:
+    - https://github.com/Anandhrosh/Devops-Intership-2026.git
+  destinations:
+    - namespace: default
+      server: https://kubernetes.default.svc
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
