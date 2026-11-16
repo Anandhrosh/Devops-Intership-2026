@@ -420,6 +420,12 @@ The following screenshots document the Kubernetes deployment and verification.
 
 ![NetworkPolicy Configuration](Screenshots/11-networkpolicy-configuration.png)
 
+## 12 - NetworkPolicy Frontend Access Blocked
+
+![NetworkPolicy Frontend Blocked](Screenshots/12-networkpolicy-frontend-blocked.png)
+
+The screenshot demonstrates that the frontend pod cannot connect directly to PostgreSQL on port 5432, while backend logs confirm a successful database connection. This verifies that the Calico NetworkPolicy restricts database ingress to backend pods labelled `tier: backend`.
+
 ## 12. Project Verification
 
 The following functionality has been tested:
