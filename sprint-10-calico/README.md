@@ -466,4 +466,154 @@ This capstone project demonstrates a three-tier application deployed on Kubernet
 
 It covers application deployment, service discovery, persistent database storage, health checks, autoscaling, Ingress routing, container security, and network isolation.
 
-Calico was used to verify NetworkPolicy enforcement. ArgoCD-based GitOps synchronization remains pending.
+Calico was used to verify NetworkPolicy enforcement. ArgoCD-based GitOps synchronization remains pending. 
+
+## Run the Project
+
+Follow these commands to start and run the DevOps Capstone application on Minikube with Calico CNI.
+
+### 1. Start Minikube
+
+```bash
+minikube start -p sprint10-calico
+kubectl config use-context sprint10-calico
+minikube status -p sprint10-calico
+```
+
+### 2. Enable Required Add-ons
+
+```bash
+minikube addons enable ingress -p sprint10-calico
+minikube addons enable metrics-server -p sprint10-calico
+```
+
+### 3. Verify PostgreSQL Secret
+
+The PostgreSQL Secret must exist before deploying the application.
+
+```bash
+kubectl get secret capstone-postgres-secret
+```
+
+If the Secret is missing, provision it securely before continuing. Never commit database credentials to Git.
+
+### 4. Build Docker Images
+
+Run these commands from the Sprint 10 project directory:
+
+```bash
+docker build -t capstone-frontend:1.0 ./frontend
+docker build -t capstone-backend:1.0 ./backend
+```
+
+### 5. Load Images into Minikube
+
+```bash
+minikube image load capstone-frontend:1.0 -p sprint10-calico
+minikube image load capstone-backend:1.0 -p sprint10-calico
+```
+
+### 6. Deploy Kubernetes Resources
+
+```bash
+kubectl apply -k kubernetes/
+```
+
+### 7. Verify Deployments and Services
+
+```bash
+kubectl get pods
+kubectl get services
+kubectl get statefulsets
+kubectl get pvc
+kubectl get hpa
+kubectl get ingress
+kubectl get networkpolicy
+```
+
+### 8. Verify Application Readiness
+
+```bash
+kubectl rollout status statefulset/capstone-postgres
+kubectl rollout status deployment/capstone-backend
+kubectl rollout status deployment/capstone-frontend
+```
+
+### 9. Access the Application
+
+Start port forwarding for the NGINX Ingress controller:
+
+```bash
+kubectl port-forward --address 0.0.0.0 -n ingress-nginx service/ingress-nginx-controller 8088:80
+```
+
+Open the application in your browser:
+
+```text
+http://capstone.local:8088
+```
+
+### 10. Test Backend API
+
+Open another terminal and run:
+
+```bash
+curl -i -H "Host: capstone.local" http://127.0.0.1:8088/api/status
+```
+
+Expected response:
+
+```json
+{
+  "application": "DevOps Capstone",
+  "backend": "Running",
+  "database": "Connected"
+}
+```
+
+### 11. Verify NetworkPolicy
+
+```bash
+kubectl get networkpolicy
+kubectl describe networkpolicy capstone-database-policy
+```
+
+The policy allows PostgreSQL ingress on port 5432 only from pods labelled `tier: backend`.
+
+### 12. Stop Minikube
+
+When finished:
+
+```bash
+minikube stop -p sprint10-calico
+```
+
+**Note:** The PostgreSQL Secret is provisioned separately and intentionally excluded from Kustomize and Git to protect database credentials.
+
+## Authors
+
+- **Anandhrosh** – DevOps Intern / Project Developer
+
+## Version History
+
+- **1.0.0** – Initial release of the DevOps Capstone project.
+  - Implemented React frontend and Go backend.
+  - Integrated PostgreSQL using Kubernetes StatefulSet and PersistentVolumeClaim.
+  - Configured Kubernetes Deployments, Services, HPA and Ingress.
+  - Implemented NetworkPolicy using Calico CNI.
+  - Packaged Kubernetes resources using Kustomize.
+  - Verified frontend, backend, database connectivity and NetworkPolicy enforcement.
+
+## License
+
+This project was developed as part of the DevOps Internship 2026 training program.
+
+## Acknowledgments
+
+- Thanks to the DevOps Internship team for providing the Sprint 10 Capstone assignment.
+- Thanks to the Kubernetes, Docker, Minikube, Calico, PostgreSQL, React, Go and Kustomize communities for their documentation and learning resources.
+- Thanks to the mentors and learning resources that supported this project.
+
+---
+
+**Thank you for reviewing my Sprint 10 DevOps Capstone Project!**
